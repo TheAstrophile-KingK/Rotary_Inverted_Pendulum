@@ -1,4 +1,104 @@
-Rotary Inverted PendulumThis repository contains the source code and documentation for a Rotary Inverted Pendulum. The system balances a free-swinging pendulum on a rotary arm using a NEMA 17 stepper motor and a high-resolution rotary encoder.The project features a custom Swing-Up algorithm (Energy Shaping) and a PID / LQR Controller running on an Arduino Mega 2560.Figure 1: The complete Rotary Inverted Pendulum setup.🚀 FeaturesAuto-Swing Up: Automatically pumps energy into the pendulum to swing it from a hanging position to the upright position.PID Stabilization: Smooth balancing using a Proportional-Integral-Derivative controller.High-Performance Stepper Control: Uses direct port manipulation and interrupt-based logic for high-speed motor response (up to 40k+ steps/sec).Safety Cutoff: Automatically disables the motor driver if the pendulum falls beyond a recoverable angle to prevent overheating.🛠️ Hardware RequirementsMicrocontroller: Arduino Mega 2560Motor: NEMA 17 Stepper MotorDriver: DRV8825 or A4988 Stepper DriverSensor: Optical Rotary Encoder (600 P/R or higher recommended)Power: 12V 2A+ Power Supply (for motor)Misc:2x 4.7kΩ Resistors (for Encoder Pull-ups)Capacitor (100µF) for driver power filtering (Optional)Figure 2: Electronics and wiring close-up.🔌 Wiring & Connections (Arduino Mega)1. Stepper Motor Driver (A4988 / DRV8825)Driver PinArduino Mega PinDescriptionSTEPPin 5Step pulse signalDIRPin 6Direction signalSLEEPPin 8Controls driver Sleep Mode (Active High)RESETPin 9Controls driver Reset (Active High)VMOTExt. 12V (+)Motor Power Supply PositiveGNDExt. 12V (-)Motor Power Supply Ground (Common Ground required!)VDD5VLogic Power (from Arduino)GNDGNDLogic Ground (from Arduino)1A / 1BMotor Coil AStepper Motor Wires Pair 12A / 2BMotor Coil BStepper Motor Wires Pair 22. Rotary EncoderNote: This setup uses Pins 2 and 3 which correspond to Port E on the ATmega2560 for fast port manipulation.Encoder WireArduino Mega PinNotesPhase A (Green)Pin 2Interrupt Pin. Connect 4.7kΩ Pull-up resistor to 5V.Phase B (White)Pin 3Interrupt Pin. Connect 4.7kΩ Pull-up resistor to 5V.VCC (Red)5VEncoder PowerGND (Black)GNDEncoder Ground🔍 Noise Reduction Circuit (Recommended)To prevent jitter and false readings, it is highly recommended to install Pull-Up Resistors on the encoder lines:Connect a 4.7kΩ resistor between Pin 2 and 5V.Connect a 4.7kΩ resistor between Pin 3 and 5V.⚙️ Installation & UsageClone the Repo:git clone [https://github.com/TheAstrophile-KingK/Rotary_Inverted_Pendulum.git](https://github.com/TheAstrophile-KingK/Rotary_Inverted_Pendulum.git)
-Install Dependencies:Install the AccelStepper library via the Arduino Library Manager (Note: The high-speed version in this repo uses custom direct-port steps, but AccelStepper is good for testing).Upload Code:Select Board: Arduino Mega or Mega 2560.Upload the .ino file.Calibration:On startup, let the pendulum hang DOWN and motionless for 3 seconds.The Serial Monitor will display Calibrating....Once complete, the system sets "Down" as 0° (or 180° depending on config) and "Up" as the target.Run:The motor will begin the "Swing Up" routine.Once near the top, the PID controller will engage to balance.🎛️ Tuning the PIDYou can modify the constants at the top of the .ino file:ParameterDefaultEffectKp (Proportional)30.0Main balancing force. Increase if it falls over slowly. Decrease if it oscillates violently.Kd (Derivative)0.1Dampening. Stops the shaking/jitter. Increase to reduce vibrations.Ki (Integral)0.015Corrects small steady-state errors (leaning).⚠️ TroubleshootingMotor is buzzing but not moving:Check your wiring pairs. Use an LED to identify Coil A vs Coil B.Adjust the current limit potentiometer (VREF) on the stepper driver.Ensure the acceleration setting in code isn't too high for your voltage (12V recommended).Driver is getting extremely hot:The code puts the driver to sleep if the robot falls. If it's still hot, check VREF.Ensure a heatsink is installed on the driver chip.Pendulum runs away (accelerates the fall):Invert the DIR_PIN logic in the code or swap the positions of the stepper motor wires (e.g., swap 1A and 1B).📄 LicenseThis project is open-source. Feel free to modify and improve!
-![IMG_1969-Enhanced-NR](https://github.com/user-attachments/assets/d7564fd5-6e1b-46b8-8208-ef1c2332b197)
-![IMG_1995-Enhanced-NR](https://github.com/user-attachments/assets/1d9bc8fe-3394-4782-8f4b-28bb53a5a75b)
+# Rotary Inverted Pendulum
+
+This repository contains the source code and documentation for a **Rotary Inverted Pendulum**.  
+The system balances a free-swinging pendulum on a rotary arm using a **NEMA 17 stepper motor** and a **high-resolution rotary encoder**.
+
+The project features:
+- A custom **Swing-Up algorithm (Energy Shaping)**
+- A **PID / LQR Controller**
+- Runs on an **Arduino Mega 2560**
+
+---
+
+## 🖼️ Figure 1: The complete Rotary Inverted Pendulum setup
+
+![Pendulum Setup](https://github.com/user-attachments/assets/d7564fd5-6e1b-46b8-8208-ef1c2332b197)
+
+---
+
+# 🚀 Features
+
+- **Auto-Swing Up** — Pumps energy into the pendulum to lift it to upright.
+- **PID Stabilization** — Smooth balancing with PID control.
+- **High-Speed Stepper Control** — Direct port manipulation + interrupts (40k+ steps/sec).
+- **Safety Cutoff** — Driver disables if pendulum falls to prevent overheating.
+
+---
+
+# 🛠️ Hardware Requirements
+
+### **Microcontroller**
+- Arduino Mega 2560
+
+### **Motor**
+- NEMA 17 Stepper Motor
+
+### **Driver**
+- DRV8825 or A4988 Stepper Driver
+
+### **Sensor**
+- Optical Rotary Encoder (600 PPR or higher recommended)
+
+### **Power**
+- 12V 2A+ power supply
+
+### **Misc**
+- 2 × 4.7kΩ Pull-up resistors  
+- 100µF capacitor (optional power filtering)
+
+---
+
+## 🖼️ Figure 2: Electronics and Wiring Close-Up
+
+![Electronics](https://github.com/user-attachments/assets/1d9bc8fe-3394-4782-8f4b-28bb53a5a75b)
+
+---
+
+# 🔌 Wiring & Connections (Arduino Mega)
+
+## **1. Stepper Motor Driver (A4988 / DRV8825)**
+
+| Driver Pin | Arduino Pin | Description |
+|-----------|-------------|-------------|
+| STEP      | Pin 5       | Step pulse signal |
+| DIR       | Pin 6       | Direction signal |
+| SLEEP     | Pin 8       | Sleep mode control (Active High) |
+| RESET     | Pin 9       | Reset control (Active High) |
+| VMOT      | Ext. 12V +  | Motor power |
+| GND       | Ext. 12V −  | Motor power ground (common ground required) |
+| VDD       | 5V          | Logic power |
+| GND       | GND         | Logic ground |
+| 1A/1B     | —           | Stepper Motor Coil A |
+| 2A/2B     | —           | Stepper Motor Coil B |
+
+---
+
+## **2. Rotary Encoder**
+
+> Pins 2 and 3 correspond to **Port E** on the ATmega2560 for fast port access.
+
+| Encoder Wire | Arduino Pin | Notes |
+|--------------|-------------|-------|
+| Phase A (Green) | Pin 2 | Interrupt pin — use 4.7kΩ pull-up |
+| Phase B (White) | Pin 3 | Interrupt pin — use 4.7kΩ pull-up |
+| VCC (Red)       | 5V    | Encoder power |
+| GND (Black)     | GND   | Encoder ground |
+
+---
+
+# 🔍 Noise Reduction (Recommended)
+
+To prevent jitter or false readings:
+
+- Connect **4.7kΩ** resistor between Pin **2 → 5V**
+- Connect **4.7kΩ** resistor between Pin **3 → 5V**
+
+---
+
+# ⚙️ Installation & Usage
+
+### **1. Clone the Repo**
+```bash
+git clone https://github.com/TheAstrophile-KingK/Rotary_Inverted_Pendulum.git
+
+
